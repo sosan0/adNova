@@ -20,7 +20,13 @@ import {
 import { motion, AnimatePresence } from 'motion/react';
 import { GoogleGenAI } from "@google/genai";
 
-const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY! });
+const getAI = () => {
+  const apiKey = process.env.GEMINI_API_KEY;
+  if (!apiKey) {
+    throw new Error("GEMINI_API_KEY is not defined. Please set it in the environment.");
+  }
+  return new GoogleGenAI({ apiKey });
+};
 
 export const AIStudioModule: React.FC = () => {
   const [activeTool, setActiveTool] = useState<'text' | 'image'>('text');
@@ -35,7 +41,9 @@ export const AIStudioModule: React.FC = () => {
     const targetPrompt = overridePrompt || prompt;
     if (!targetPrompt) return;
     setIsGenerating(true);
+    setResult(null);
     try {
+      const ai = getAI();
       const response = await ai.models.generateContent({
         model: "gemini-3-flash-preview",
         contents: `Generate a creative and engaging social media post based on this prompt: "${targetPrompt}". Include relevant hashtags and emojis.`,
@@ -61,7 +69,9 @@ export const AIStudioModule: React.FC = () => {
     const targetPrompt = overridePrompt || prompt;
     if (!targetPrompt) return;
     setIsGenerating(true);
+    setGeneratedImage(null);
     try {
+      const ai = getAI();
       const response = await ai.models.generateContent({
         model: 'gemini-2.5-flash-image',
         contents: {

@@ -20,6 +20,15 @@ async function startServer() {
   wss.on("connection", (ws) => {
     console.log("Client connected to analytics stream");
 
+    let isAlive = true;
+    ws.on('pong', () => { isAlive = true; });
+
+    const pingInterval = setInterval(() => {
+      if (isAlive === false) return ws.terminate();
+      isAlive = false;
+      ws.ping();
+    }, 30000);
+
     // Send initial data
     const sendUpdate = () => {
       if (ws.readyState === WebSocket.OPEN) {
@@ -46,6 +55,7 @@ async function startServer() {
 
     ws.on("close", () => {
       clearInterval(interval);
+      clearInterval(pingInterval);
       console.log("Client disconnected");
     });
   });

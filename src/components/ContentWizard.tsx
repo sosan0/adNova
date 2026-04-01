@@ -22,7 +22,13 @@ import {
 import { motion, AnimatePresence } from 'motion/react';
 import { GoogleGenAI, Type } from "@google/genai";
 
-const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY! });
+const getAI = () => {
+  const apiKey = process.env.GEMINI_API_KEY;
+  if (!apiKey) {
+    throw new Error("GEMINI_API_KEY is not defined. Please set it in the environment.");
+  }
+  return new GoogleGenAI({ apiKey });
+};
 
 interface ContentWizardProps {
   initialPlatforms?: string[];
@@ -52,6 +58,7 @@ export const ContentWizard: React.FC<ContentWizardProps> = ({ initialPlatforms =
     if (!caption) return;
     setIsGeneratingHashtags(true);
     try {
+      const ai = getAI();
       const response = await ai.models.generateContent({
         model: "gemini-3-flash-preview",
         contents: `Suggest 10 relevant and trending social media hashtags for this caption: "${caption}". Return only the hashtags separated by spaces.`,
@@ -84,6 +91,7 @@ export const ContentWizard: React.FC<ContentWizardProps> = ({ initialPlatforms =
     if (!caption) return;
     setIsOptimizingCaption(true);
     try {
+      const ai = getAI();
       const response = await ai.models.generateContent({
         model: "gemini-3-flash-preview",
         contents: `Optimize this social media caption for better engagement and clarity: "${caption}". Keep the same tone but make it more impactful. Return only the optimized caption.`,

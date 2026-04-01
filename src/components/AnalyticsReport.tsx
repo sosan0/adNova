@@ -117,40 +117,58 @@ export const AnalyticsReport: React.FC = () => {
   ];
 
   useEffect(() => {
-    const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-    const wsUrl = `${protocol}//${window.location.host}`;
-    const socket = new WebSocket(wsUrl);
+    let socket: WebSocket | null = null;
+    let reconnectTimer: NodeJS.Timeout | null = null;
 
-    socket.onopen = () => {
-      console.log('Connected to analytics stream');
-      setIsLive(true);
-    };
+    const connect = () => {
+      const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+      const wsUrl = `${protocol}//${window.location.host}`;
+      socket = new WebSocket(wsUrl);
 
-    socket.onmessage = (event) => {
-      try {
-        const message = JSON.parse(event.data);
-        if (message.type === 'ANALYTICS_UPDATE') {
-          const { reach, engagement, timestamp, stats } = message.data;
-          
-          setChartData(prev => {
-            const newData = [...prev.slice(1), { name: timestamp, reach, engagement }];
-            return newData;
-          });
+      socket.onopen = () => {
+        console.log('Connected to analytics stream');
+        setIsLive(true);
+      };
 
-          setLiveStats(stats);
+      socket.onmessage = (event) => {
+        try {
+          const message = JSON.parse(event.data);
+          if (message.type === 'ANALYTICS_UPDATE') {
+            const { reach, engagement, timestamp, stats } = message.data;
+            
+            setChartData(prev => {
+              const newData = [...prev.slice(1), { name: timestamp, reach, engagement }];
+              return newData;
+            });
+
+            setLiveStats(stats);
+          }
+        } catch (err) {
+          console.error('Error parsing analytics update:', err);
         }
-      } catch (err) {
-        console.error('Error parsing analytics update:', err);
-      }
+      };
+
+      socket.onclose = () => {
+        console.log('Disconnected from analytics stream');
+        setIsLive(false);
+        // Try to reconnect after 3 seconds
+        reconnectTimer = setTimeout(connect, 3000);
+      };
+
+      socket.onerror = (err) => {
+        console.error('WebSocket error:', err);
+        socket?.close();
+      };
     };
 
-    socket.onclose = () => {
-      console.log('Disconnected from analytics stream');
-      setIsLive(false);
-    };
+    connect();
 
     return () => {
-      socket.close();
+      if (socket) {
+        socket.onclose = null; // Prevent reconnection on unmount
+        socket.close();
+      }
+      if (reconnectTimer) clearTimeout(reconnectTimer);
     };
   }, []);
 
