@@ -86,35 +86,35 @@ export const TemplatesModule: React.FC<TemplatesModuleProps> = ({ onUseTemplate 
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
         {filteredTemplates.map((template) => (
           <motion.div 
             key={template.id}
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="bg-white border border-slate-200 rounded-3xl p-6 shadow-sm hover:shadow-xl hover:border-brand/20 transition-all group relative overflow-hidden"
+            className="bg-white border border-slate-200 rounded-[24px] md:rounded-3xl p-5 md:p-6 shadow-sm hover:shadow-xl hover:border-brand/20 transition-all group relative overflow-hidden"
           >
             {/* Background Accent */}
-            <div className="absolute top-0 right-0 w-24 h-24 bg-brand/5 rounded-bl-[100px] -mr-8 -mt-8 transition-all group-hover:scale-150"></div>
+            <div className="absolute top-0 right-0 w-20 h-20 md:w-24 md:h-24 bg-brand/5 rounded-bl-[80px] md:rounded-bl-[100px] -mr-6 -mt-6 md:-mr-8 md:-mt-8 transition-all group-hover:scale-150"></div>
             
             <div className="relative z-10">
               <div className="flex items-center justify-between mb-4">
-                <div className="w-10 h-10 bg-brand/10 text-brand rounded-xl flex items-center justify-center">
-                  <Layout size={20} />
+                <div className="w-9 h-9 md:w-10 md:h-10 bg-brand/10 text-brand rounded-xl flex items-center justify-center">
+                  <Layout size={18} className="md:w-5 md:h-5" />
                 </div>
-                <div className="flex items-center gap-1.5 px-2 py-1 bg-slate-50 text-slate-500 text-[10px] font-bold rounded-lg border border-slate-100">
+                <div className="flex items-center gap-1.5 px-2 py-1 bg-slate-50 text-slate-500 text-[9px] md:text-[10px] font-bold rounded-lg border border-slate-100">
                   <Zap size={10} />
                   {template.usageCount} uses
                 </div>
               </div>
 
-              <h3 className="font-bold text-slate-900 mb-2 group-hover:text-brand transition-colors">{template.title}</h3>
-              <p className="text-xs text-slate-500 mb-6 line-clamp-2 leading-relaxed">
+              <h3 className="font-bold text-slate-900 mb-2 group-hover:text-brand transition-colors text-sm md:text-base">{template.title}</h3>
+              <p className="text-[11px] md:text-xs text-slate-500 mb-5 line-clamp-2 leading-relaxed">
                 {template.description}
               </p>
 
-              <div className="p-4 bg-slate-50 rounded-2xl border border-slate-100 mb-6 relative group/content">
-                <p className="text-[11px] text-slate-600 line-clamp-3 italic leading-relaxed">
+              <div className="p-3 md:p-4 bg-slate-50 rounded-xl md:rounded-2xl border border-slate-100 mb-5 relative group/content">
+                <p className="text-[10px] md:text-[11px] text-slate-600 line-clamp-3 italic leading-relaxed">
                   "{template.content}"
                 </p>
                 <button 
@@ -126,15 +126,15 @@ export const TemplatesModule: React.FC<TemplatesModuleProps> = ({ onUseTemplate 
                 </button>
               </div>
 
-              <div className="flex items-center justify-between">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                 <div className="flex gap-1">
                   {template.tags.map(tag => (
-                    <span key={tag} className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">#{tag}</span>
+                    <span key={tag} className="text-[8px] md:text-[9px] font-bold text-slate-400 uppercase tracking-widest">#{tag}</span>
                   ))}
                 </div>
                 <button 
                   onClick={() => onUseTemplate(template)}
-                  className="flex items-center gap-2 px-4 py-2 bg-slate-900 text-white text-xs font-bold rounded-xl hover:bg-brand transition-all"
+                  className="w-full sm:w-auto flex items-center justify-center gap-2 px-4 py-2 bg-slate-900 text-white text-[10px] md:text-xs font-bold rounded-xl hover:bg-brand transition-all"
                 >
                   Use Template <ChevronRight size={14} />
                 </button>
