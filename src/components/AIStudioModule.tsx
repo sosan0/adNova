@@ -192,7 +192,17 @@ export const AIStudioModule: React.FC = () => {
             </div>
             <div className="flex items-center gap-2">
               <button className="p-2 text-slate-400 hover:text-brand transition-all"><Star size={18} /></button>
-              <button className="p-2 text-slate-400 hover:text-brand transition-all"><RefreshCw size={18} /></button>
+              <button 
+                onClick={() => {
+                  setPrompt('');
+                  setResult(null);
+                  setGeneratedImage(null);
+                }}
+                className="p-2 text-slate-400 hover:text-brand transition-all"
+                title="Reset"
+              >
+                <RefreshCw size={18} />
+              </button>
             </div>
           </div>
 
@@ -235,6 +245,15 @@ export const AIStudioModule: React.FC = () => {
                   <div className="flex items-center justify-between">
                     <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Generated Result</p>
                     <div className="flex items-center gap-2">
+                      <button 
+                        onClick={() => activeTool === 'text' ? handleGenerateText() : handleGenerateImage()}
+                        disabled={isGenerating}
+                        className="p-2 text-slate-400 hover:text-brand transition-all flex items-center gap-1.5" 
+                        title="Try Alternative"
+                      >
+                        <RefreshCw size={16} className={isGenerating ? "animate-spin" : ""} />
+                        <span className="text-[10px] font-bold">Alternative</span>
+                      </button>
                       <button className="p-2 text-slate-400 hover:text-brand transition-all" title="Copy"><Copy size={16} /></button>
                       <button className="p-2 text-slate-400 hover:text-brand transition-all" title="Download"><Download size={16} /></button>
                     </div>
